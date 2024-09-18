@@ -1,3 +1,8 @@
+This is a fork of the official realismAddon_gearbox mod for Farming Simulator 22. 
+I use it to propose changes and improvements to it. 
+
+See the official repository of the mod here:
+
 # FS22_realismAddon_gearbox
 This is it, RMT (real manual transmission) for FS22 is back. Well kind of.
 The goal with this mod is to fix all the large and little problems realism players have with the default FS22 transmissions, mainly aimed and made for players with steering wheel and pedals. 
@@ -7,7 +12,7 @@ If you have any issues or any improvement ideas please feel free to open a issue
 
 
 # Credits
-- mainly me, Modelleicher
+- Modelleicher
 - bases on Giants stuff 
  
 # Changelog:
