@@ -1,4 +1,4 @@
-NOTE:
+# NOTE:
 This is a fork of the official realismAddon_gearbox mod for Farming Simulator 22. 
 I use it to propose changes and improvements to it. 
 
