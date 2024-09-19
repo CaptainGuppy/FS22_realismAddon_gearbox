@@ -179,23 +179,27 @@ end
 VehicleMotor.getAcceleratorPedal = Utils.overwrittenFunction(VehicleMotor.getAcceleratorPedal,
 	realismAddon_gearbox_overrides.getAcceleratorPedal)
 
--- New function to check if the current gear is too high for the engine to maintain
-function realismAddon_gearbox_overrides.checkIfStall(self, motor)
-    -- Ensure motor is valid
-    if motor ~= nil and motor.currentGears[motor.gear] ~= nil then
-        local currentGearRatio = motor.currentGears[motor.gear].ratio * motor:getGearRatioMultiplier()
-        local currentRpm = motor.lastMotorRpm
-        local minRpmForStall = motor.minRpm + 100
-        local highGearStallThreshold = 10
-
-        if currentGearRatio > highGearStallThreshold and currentRpm < minRpmForStall then
-            self:setLastRpm(0)
-            motor.lastRealMotorRpm = 0
-            self:stopMotor()
-        end
-    end
-end
-
+	function realismAddon_gearbox_overrides.checkIfStall(self, motor)
+		-- Ensure motor is valid
+		if motor ~= nil and motor.currentGears[motor.gear] ~= nil then
+			local currentGearRatio = motor.currentGears[motor.gear].ratio * motor:getGearRatioMultiplier()
+			local currentRpm = motor.lastMotorRpm
+			local minRpmForStall = motor.minRpm + 100
+			local highGearStallThreshold = 10
+	
+			-- New condition: if speed is low and throttle is high while in high gear
+			local vehicleSpeed = self.vehicle:getLastSpeed()
+			local throttleInput = math.max(self.vehicle:getAxisForward(), 0) -- Assumes positive throttle only
+	
+			-- More realistic stall trigger: low speed, high gear, low RPM, and high throttle
+			if currentGearRatio > highGearStallThreshold and currentRpm < minRpmForStall and vehicleSpeed < 5 and throttleInput > 0.5 then
+				self:setLastRpm(0)
+				motor.lastRealMotorRpm = 0
+				self:stopMotor()
+			end
+		end
+	end
+	
 
 -- VehicleMotor.update
 function realismAddon_gearbox_overrides.update(self, superFunc, dt)
