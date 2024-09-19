@@ -179,6 +179,20 @@ end
 VehicleMotor.getAcceleratorPedal = Utils.overwrittenFunction(VehicleMotor.getAcceleratorPedal,
 	realismAddon_gearbox_overrides.getAcceleratorPedal)
 
+-- New function to check if the current gear is too high for the engine to maintain
+function realismAddon_gearbox_overrides.checkIfStall(self, motor)
+	local currentGearRatio = motor.currentGears[motor.gear].ratio * motor:getGearRatioMultiplier()
+	local currentRpm = motor.lastMotorRpm
+	local minRpmForStall = motor.minRpm + 100
+	local highGearStallThreshold = 10
+
+	if currentGearRatio > highGearStallThreshold and currentRpm < minRpmForStall then
+		self:setLastRpm(0)
+		motor.lastRealMotorRpm = 0
+		self:stopMotor()
+	end
+end
+
 -- VehicleMotor.update
 function realismAddon_gearbox_overrides.update(self, superFunc, dt)
 	-- do our custom stuff only if we are in SHIFT_MODE_MANUAL_CLUTCH and in a vehicle with manual transmission
@@ -238,6 +252,8 @@ function realismAddon_gearbox_overrides.update(self, superFunc, dt)
 		-- modelleicher
 		-- if clutch is pressed, motor RPM is not dependent on wheel speed anymore.. Instead, calculate motor RPM based on accelerator pedal input
 		if self.manualClutchValue > 0.1 or self:getIsInNeutral() then
+			realismAddon_gearbox_overrides.checkIfStall(self, motor)
+
 			local clutchPercent = 1 - self.manualClutchValue
 
 			if self:getIsInNeutral() then
