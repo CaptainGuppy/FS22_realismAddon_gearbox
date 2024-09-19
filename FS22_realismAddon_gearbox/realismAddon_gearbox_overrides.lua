@@ -181,17 +181,21 @@ VehicleMotor.getAcceleratorPedal = Utils.overwrittenFunction(VehicleMotor.getAcc
 
 -- New function to check if the current gear is too high for the engine to maintain
 function realismAddon_gearbox_overrides.checkIfStall(self, motor)
-	local currentGearRatio = motor.currentGears[motor.gear].ratio * motor:getGearRatioMultiplier()
-	local currentRpm = motor.lastMotorRpm
-	local minRpmForStall = motor.minRpm + 100
-	local highGearStallThreshold = 10
+    -- Ensure motor is valid
+    if motor ~= nil and motor.currentGears[motor.gear] ~= nil then
+        local currentGearRatio = motor.currentGears[motor.gear].ratio * motor:getGearRatioMultiplier()
+        local currentRpm = motor.lastMotorRpm
+        local minRpmForStall = motor.minRpm + 100
+        local highGearStallThreshold = 10
 
-	if currentGearRatio > highGearStallThreshold and currentRpm < minRpmForStall then
-		self:setLastRpm(0)
-		motor.lastRealMotorRpm = 0
-		self:stopMotor()
-	end
+        if currentGearRatio > highGearStallThreshold and currentRpm < minRpmForStall then
+            self:setLastRpm(0)
+            motor.lastRealMotorRpm = 0
+            self:stopMotor()
+        end
+    end
 end
+
 
 -- VehicleMotor.update
 function realismAddon_gearbox_overrides.update(self, superFunc, dt)
